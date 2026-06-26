@@ -1,7 +1,5 @@
-node_modules/
-.vercel/
-.DS_Store
 binance_logo.png
 binance_x_catapult_bunner.png
 catapult_earn_logo.jpg
 catapult_trade_logo.jpeg
+*.zip
