@@ -572,34 +572,42 @@ const isAndroid = /Android/i.test(UA);
 const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 const isInApp = /(FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|Telegram|TelegramBot|Twitter|TikTok|musical_ly|BytedanceWebview|Snapchat|GSA|OKApp|VKClient)/i.test(UA);
 
-function openExternal(url){
-  showToast();
-
-  /* ---- Android: an intent:// URL hands the link to the system,
-     which opens it in the user's DEFAULT real browser, escaping the webview. ---- */
-  if(isAndroid){
-    const noProto = url.replace(/^https?:\/\//,'');
-    const intent = 'intent://'+noProto+'#Intent;scheme=https;action=android.intent.action.VIEW;end;';
-    try{ window.location.href = intent; return; }catch(e){}
-  }
-
-  /* ---- iOS inside an in-app browser ---- */
-  if(isIOS && isInApp){
-    // Best effort: try to jump straight to Chrome if it's installed (breaks the webview).
-    const noProto = url.replace(/^https?:\/\//,'');
-    try{ window.location.href = 'googlechromes://'+noProto; }catch(e){}
-    // iOS gives no reliable API to force Safari from Instagram/FB/TikTok webviews,
-    // so after a moment we show a tasteful "open in browser" instruction.
-    setTimeout(()=>{ if(!document.hidden) hint.classList.add('show'); }, 1200);
-    return;
-  }
-
-  /* ---- Normal browsers: open a new tab, keep THIS page as-is ---- */
+function openTab(url){
+  // open a new tab in WHATEVER browser the user is currently in (their default)
   const a = document.createElement('a');
   a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
   document.body.appendChild(a);
   a.click();
   a.remove();
+}
+
+function openExternal(url){
+  showToast();
+
+  /* ---- Inside an in-app webview (Telegram / Instagram / FB / TikTok ...) ----
+     Goal: break out into the phone's OWN default browser, auto-detected. */
+  if(isInApp){
+    if(isAndroid){
+      // Hand the link to Android via a VIEW intent with NO package set ->
+      // the system opens it in the user's DEFAULT browser (Chrome, Samsung, etc.).
+      const noProto = url.replace(/^https?:\/\//,'');
+      const intent = 'intent://'+noProto+'#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end;';
+      try{ window.location.href = intent; return; }catch(e){}
+    }
+    if(isIOS){
+      // iOS gives no public API to force the default browser (Safari) out of an
+      // in-app webview, so we open a tab AND surface a short "open in browser" hint.
+      openTab(url);
+      setTimeout(()=>{ if(!document.hidden) hint.classList.add('show'); }, 900);
+      return;
+    }
+    // any other in-app webview: just navigate out
+    try{ window.location.href = url; return; }catch(e){}
+  }
+
+  /* ---- Already in a real browser (mobile Safari/Chrome or desktop) ----
+     Open a new tab in that same (default) browser, keep THIS page as-is. */
+  openTab(url);
 }
 
 document.querySelectorAll('.card, .bnb-btn').forEach(el=>{
