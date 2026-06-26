@@ -581,9 +581,12 @@ function openExternal(url){
     return;
   }
 
-  /* ---- Normal browsers: open in a new tab ---- */
-  const w = window.open(url,'_blank','noopener,noreferrer');
-  if(!w){ window.location.href = url; }
+  /* ---- Normal browsers: open a new tab, keep THIS page as-is ---- */
+  const a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 document.querySelectorAll('.card, .bnb-btn').forEach(el=>{
