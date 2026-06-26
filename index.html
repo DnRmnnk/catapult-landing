@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<title>Catapult — Launch into the next 1000×</title>
+<meta name="description" content="Catapult Trade — the launchpad for the next generation of tokens." />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Catapult Trade" />
+<meta property="og:description" content="The launchpad for the next 1000×. Trade. Launch. Earn." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://lets-catapult.co/og/og-es.jpg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   CATAPULT — design tokens lifted 1:1 from the live site CSS
+   ============================================================ */
+:root{
+  --bg:#0a0a0a;
+  --surface:#121212;
+  --surface-2:#141414;
+  --surface-3:#171717;
+  --border:#1c1f22;
+  --txt-primary:#f5f5f5;
+  --txt-secondary:#999;
+  --action:#6ef7d7;       /* primary brand green */
+  --action-hover:#86f8de;
+  --accent:#5eedcc;
+  --on-action:#02271e;    /* dark text that sits on green */
+  --green-deep:#089171;
+  --green-glow:#00b88c;
+  /* category accent colours from the live booster badges */
+  --gold-1:#f8d12f;
+  --gold-2:#f0b90b;       /* Binance yellow */
+  --gold-3:#ffe98a;
+  --violet-1:#a142fe;
+  --violet-2:#7c3aed;
+  --blue-1:#40a1ff;
+  /* motion — same eases the app uses */
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+  --r-card:20px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'Inter',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--txt-primary);
+  min-height:100dvh;
+  overflow-x:hidden;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+a{text-decoration:none;color:inherit;}
+
+/* ============================================================
+   ANIMATED BACKGROUND
+   ============================================================ */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.bg-grid{
+  position:absolute;inset:-2px;
+  background-image:
+    linear-gradient(to right,rgba(110,247,215,.05) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(110,247,215,.05) 1px,transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 75%);
+  animation:gridDrift 24s linear infinite;
+}
+@keyframes gridDrift{from{background-position:0 0}to{background-position:46px 46px}}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;mix-blend-mode:screen;}
+.blob.b1{width:520px;height:520px;top:-180px;left:-120px;background:radial-gradient(circle,#007056,transparent 70%);animation:float1 18s var(--ease) infinite;}
+.blob.b2{width:460px;height:460px;top:-120px;right:-140px;background:radial-gradient(circle,#0f5e8f,transparent 70%);animation:float2 22s var(--ease) infinite;}
+.blob.b3{width:600px;height:600px;bottom:-260px;left:30%;background:radial-gradient(circle,#0a4a3a,transparent 70%);animation:float3 26s var(--ease) infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,40px) scale(1.12)}}
+@keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,50px) scale(1.08)}}
+@keyframes float3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-40px) scale(1.15)}}
+
+/* floating coins / particles */
+.particles{position:absolute;inset:0;}
+.particle{
+  position:absolute;bottom:-20px;
+  width:8px;height:8px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,var(--accent),var(--green-deep));
+  box-shadow:0 0 8px var(--green-glow);
+  opacity:0;
+  animation:rise linear infinite;
+}
+@keyframes rise{
+  0%{transform:translateY(0) scale(.6);opacity:0}
+  10%{opacity:.8}
+  90%{opacity:.5}
+  100%{transform:translateY(-115vh) scale(1);opacity:0}
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.wrap{
+  position:relative;z-index:2;
+  flex:1;
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  padding:22px 20px calc(28px + env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.logo{height:30px;width:auto;filter:drop-shadow(0 0 18px rgba(110,247,215,.25));animation:logoIn .8s var(--ease) both;}
+@keyframes logoIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.lang{position:relative;}
+.lang-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--txt-primary);
+  padding:8px 11px;border-radius:12px;
+  font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  transition:border-color .2s var(--ease-soft),background .2s var(--ease-soft);
+}
+.lang-btn:hover{border-color:#2a2f33;background:var(--surface-3);}
+.lang-btn .flag{font-size:15px;line-height:1;}
+.lang-btn .chev{width:12px;height:12px;opacity:.6;transition:transform .2s var(--ease);}
+.lang.open .chev{transform:rotate(180deg);}
+.lang-menu{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:50;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:6px;
+  min-width:172px;
+  max-height:300px;overflow:auto;
+  box-shadow:0 16px 40px rgba(0,0,0,.55);
+  opacity:0;transform:translateY(-6px) scale(.97);
+  transform-origin:top right;
+  pointer-events:none;
+  transition:opacity .22s var(--ease),transform .22s var(--ease);
+}
+.lang.open .lang-menu{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.lang-opt{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:9px;cursor:pointer;
+  font-size:13.5px;font-weight:500;color:var(--txt-secondary);
+  transition:background .15s,color .15s;
+}
+.lang-opt:hover{background:var(--surface-3);color:var(--txt-primary);}
+.lang-opt.active{color:var(--action);background:#1fad8c1a;}
+.lang-opt .flag{font-size:16px;}
+
+/* ---------- hero ---------- */
+.hero{margin-top:34px;text-align:center;animation:fadeUp .7s var(--ease) both;animation-delay:.05s;}
+.hero h1{
+  font-size:clamp(26px,7vw,34px);
+  font-weight:800;letter-spacing:-.02em;line-height:1.12;
+}
+.hero h1 .grad{
+  background:linear-gradient(90deg,var(--accent),#fff 55%,var(--accent));
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 5s linear infinite;
+}
+@keyframes shine{to{background-position:-200% center}}
+.hero p{margin-top:11px;font-size:15px;line-height:1.5;color:var(--txt-secondary);max-width:380px;margin-inline:auto;}
+
+/* ---------- binance hero banner ---------- */
+.bnb-banner{
+  position:relative;margin-top:26px;
+  border-radius:var(--r-card);
+  padding:1px;overflow:hidden;
+  background:linear-gradient(135deg,#3a2f05,#6b540a 40%,#3a2f05);
+  animation:fadeUp .7s var(--ease) both;animation-delay:.12s;
+}
+.bnb-banner-inner{
+  position:relative;
+  border-radius:calc(var(--r-card) - 1px);
+  background:
+    radial-gradient(120% 140% at 85% 20%,rgba(240,185,11,.28),transparent 55%),
+    linear-gradient(135deg,#1a1604,#0d0c08);
+  padding:16px 18px;
+  display:flex;align-items:center;gap:14px;overflow:hidden;
+}
+.bnb-banner-inner::after{
+  content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,233,138,.18),transparent);
+  transform:skewX(-18deg);
+  animation:sweep 4.5s var(--ease) infinite;
+}
+@keyframes sweep{0%{left:-60%}55%,100%{left:130%}}
+.bnb-icon{flex:none;width:42px;height:42px;animation:spinY 6s linear infinite;}
+@keyframes spinY{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.bnb-text{flex:1;min-width:0;}
+.bnb-text .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-3);font-weight:700;opacity:.85;}
+.bnb-text .amt{font-size:20px;font-weight:800;color:#fff;line-height:1.2;margin-top:2px;}
+.bnb-text .amt small{font-weight:600;color:var(--gold-3);font-size:13px;}
+
+/* ---------- link cards ---------- */
+.cards{margin-top:18px;display:flex;flex-direction:column;gap:13px;}
+.card{
+  position:relative;
+  display:flex;align-items:center;gap:14px;
+  border-radius:var(--r-card);
+  padding:16px 16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  cursor:pointer;overflow:hidden;
+  transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease);
+  animation:fadeUp .6s var(--ease) both;
+  -webkit-user-select:none;user-select:none;
+}
+.card:nth-of-type(1){animation-delay:.18s;}
+.card:nth-of-type(2){animation-delay:.26s;}
+.card:nth-of-type(3){animation-delay:.34s;}
+.card::before{ /* gradient glow border on hover */
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+  background:var(--glow,linear-gradient(135deg,transparent,transparent));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  opacity:0;transition:opacity .3s var(--ease);pointer-events:none;
+}
+.card::after{ /* shine sweep */
+  content:"";position:absolute;top:0;left:-75%;width:55%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.07),transparent);
+  transform:skewX(-18deg);opacity:0;pointer-events:none;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.5);}
+.card:hover::before{opacity:1;}
+.card:hover::after{opacity:1;animation:sweep 1.1s var(--ease);}
+.card:active{transform:translateY(-1px) scale(.99);}
+
+.card-ic{
+  flex:none;width:50px;height:50px;border-radius:14px;
+  display:grid;place-items:center;
+  background:var(--ic-bg,var(--surface-3));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.card-ic svg{width:26px;height:26px;}
+.card-body{flex:1;min-width:0;}
+.card-title{font-size:16px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.card-sub{font-size:13px;color:var(--txt-secondary);margin-top:3px;line-height:1.35;}
+.tag{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:999px;line-height:1;white-space:nowrap;}
+.tag.lim{background:rgba(240,185,11,.15);color:var(--gold-2);border:1px solid rgba(240,185,11,.3);}
+.tag.rec{background:#1fad8c26;color:var(--action);border:1px solid rgba(110,247,215,.3);}
+.tag.earn{background:rgba(161,66,254,.16);color:#c79bff;border:1px solid rgba(161,66,254,.32);}
+.card-arrow{flex:none;width:22px;height:22px;color:var(--txt-secondary);transition:transform .28s var(--ease),color .28s var(--ease);}
+.card:hover .card-arrow{transform:translateX(3px);color:var(--txt-primary);}
+
+/* per-card accent */
+.card.c-bnb{--glow:linear-gradient(135deg,#f0b90b,transparent 60%);--ic-bg:linear-gradient(135deg,#3a2f05,#0d0c08);}
+.card.c-bnb .card-ic svg{filter:drop-shadow(0 0 6px rgba(240,185,11,.5));}
+.card.c-trade{--glow:linear-gradient(135deg,var(--action),transparent 60%);--ic-bg:linear-gradient(135deg,#06352a,#0a0a0a);}
+.card.c-pack{--glow:linear-gradient(135deg,#a142fe,transparent 60%);--ic-bg:linear-gradient(135deg,#2a1147,#0a0a0a);}
+
+/* primary emphasis on the trade card */
+.card.c-trade{background:linear-gradient(135deg,#0e1f1a,#0c0c0c);border-color:rgba(110,247,215,.18);}
+.card.c-trade .card-title{color:#fff;}
+
+/* ---------- footer ---------- */
+.foot{margin-top:auto;padding-top:26px;text-align:center;}
+.foot .verified{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--action);font-weight:600;margin-bottom:8px;}
+.foot .verified svg{width:14px;height:14px;}
+.foot p{font-size:11.5px;color:#666;line-height:1.5;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+  z-index:200;
+  background:var(--surface-2);border:1px solid var(--border);
+  color:var(--txt-primary);font-size:13.5px;font-weight:600;
+  padding:11px 16px;border-radius:13px;
+  display:flex;align-items:center;gap:9px;
+  box-shadow:0 12px 32px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease),transform .25s var(--ease);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast .spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(110,247,215,.25);border-top-color:var(--action);animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ---------- in-app browser hint overlay ---------- */
+.hint{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:28px;}
+.hint.show{display:flex;animation:fadeUp .3s var(--ease);}
+.hint-card{background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:26px 22px;max-width:340px;text-align:center;}
+.hint-card .big{font-size:40px;margin-bottom:6px;}
+.hint-card h3{font-size:18px;font-weight:700;margin-bottom:8px;}
+.hint-card p{font-size:14px;color:var(--txt-secondary);line-height:1.5;}
+.hint-card .dots{display:inline-block;font-weight:800;color:var(--action);font-size:18px;letter-spacing:2px;}
+.hint-card button{margin-top:18px;width:100%;background:var(--action);color:var(--on-action);border:none;border-radius:12px;padding:12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;}
+.hint-arrow{position:fixed;top:14px;right:18px;font-size:30px;color:var(--action);animation:bob 1s var(--ease) infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ============================================================
+   DESKTOP
+   ============================================================ */
+@media (min-width:780px){
+  .wrap{max-width:1080px;padding:30px 40px 40px;}
+  .hero{margin-top:40px;}
+  .hero h1{font-size:46px;}
+  .hero p{font-size:17px;max-width:560px;}
+  .bnb-banner{max-width:760px;margin-inline:auto;margin-top:30px;}
+  .bnb-banner-inner{padding:18px 24px;}
+  .bnb-icon{width:48px;height:48px;}
+  .bnb-text .amt{font-size:24px;}
+  .cards{flex-direction:row;margin-top:26px;align-items:stretch;}
+  .card{flex:1;flex-direction:column;text-align:center;align-items:center;padding:28px 22px;gap:16px;}
+  .card-ic{width:64px;height:64px;border-radius:18px;}
+  .card-ic svg{width:32px;height:32px;}
+  .card-title{justify-content:center;font-size:18px;}
+  .card-sub{font-size:14px;}
+  .card-arrow{position:absolute;top:16px;right:16px;}
+  .card-body{display:flex;flex-direction:column;align-items:center;}
+}
+@media (min-width:780px){
+  .hero h1{font-size:clamp(40px,4.6vw,56px);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s!important;animation-iteration-count:1!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== animated background ===== -->
+<div class="bg" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<main class="wrap">
+
+  <!-- top bar -->
+  <header class="topbar">
+    <!-- Catapult logo (exact SVG from brand kit) -->
+    <svg class="logo" viewBox="0 0 141 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Catapult">
+      <g clip-path="url(#cl0)">
+        <path d="M8.836 30.374c-1.697 0-3.15-.346-4.354-1.036-1.205-.69-2.129-1.677-2.772-2.956-.642-1.28-.964-2.791-.964-4.535 0-1.744.321-3.25.964-4.522.642-1.272 1.566-2.253 2.772-2.943 1.205-.69 2.656-1.036 4.354-1.036.935 0 1.835.126 2.7.377.864.251 1.613.612 2.248 1.083.348.22.55.483.607.789.054.306.007.58-.143.825-.151.244-.368.404-.654.482-.286.078-.603 0-.951-.234-.54-.392-1.123-.683-1.748-.872-.627-.19-1.288-.282-1.986-.282-1.808 0-3.187.55-4.139 1.649-.951 1.1-1.427 2.661-1.427 4.688 0 2.026.476 3.591 1.427 4.698.952 1.107 2.331 1.66 4.139 1.66.698 0 1.368-.094 2.01-.282.642-.19 1.249-.486 1.821-.896.348-.22.658-.295.928-.224.27.071.476.224.618.459.142.235.19.499.142.788-.047.291-.213.539-.499.743-.665.519-1.44.91-2.32 1.178-.88.267-1.804.4-2.772.4Z" fill="#fff"/>
+        <path d="M113.894 30.375c-.84 0-1.261-.424-1.261-1.273V14.62c0-.848.412-1.272 1.237-1.272.826 0 1.238.424 1.238 1.272v13.617h10.513c.729 0 1.094.353 1.094 1.056 0 .703-.365 1.082-1.094 1.082h-11.727Z" fill="#fff"/>
+        <path d="M131.699 30.374c-.825 0-1.237-.422-1.237-1.267V15.426h-6.216c-.715 0-1.07-.351-1.07-1.052 0-.701.357-1.029 1.07-1.029h14.882c.729 0 1.095.342 1.095 1.029 0 .686-.365 1.052-1.095 1.052h-6.217v13.681c0 .845-.404 1.267-1.214 1.267Z" fill="#fff"/>
+        <path d="M41.301 30.374c-.826 0-1.238-.422-1.238-1.267V15.426h-6.216c-.714 0-1.07-.351-1.07-1.052 0-.701.357-1.029 1.07-1.029h14.882c.729 0 1.095.342 1.095 1.029 0 .686-.364 1.052-1.095 1.052h-6.216v13.681c0 .845-.405 1.267-1.214 1.267Z" fill="#fff"/>
+        <path d="M87.519 14.698c-.982-.901-2.378-1.352-4.186-1.352h-8.984c-.549 0-.993.444-.993.992 0 .548.444.992.993.992h8.627c2.411 0 3.616 1.05 3.616 3.157 0 2.106-1.205 3.18-3.616 3.18h-6.12c-1.933 0-3.5 1.566-3.5 3.497v3.94c0 .844.412 1.266 1.236 1.266.823 0 1.237-.422 1.237-1.266v-4.12c0-.735.598-1.332 1.334-1.332h6.17c1.808 0 3.204-.45 4.187-1.351.984-.901 1.474-2.172 1.474-3.814 0-1.642-.49-2.89-1.475-3.79Z" fill="#fff"/>
+        <path d="M101.351 30.363c-4.716.246-8.636-3.632-8.636-8.38V14.538c0-.659.53-1.192 1.186-1.192.655 0 1.187.533 1.187 1.192v7.469c0 3.207 2.512 5.909 5.7 5.98 3.28.074 5.97-2.586 5.97-5.864v-7.585c0-.659.53-1.192 1.186-1.192.654 0 1.187.533 1.187 1.192v7.585c0 4.404-3.45 8.012-7.775 8.24h-.005Z" fill="#fff"/>
+        <path d="M68.514 30.374c-.428 0-.815-.244-1.01-.637L61.508 17.626c-.565-1.14-1.644-1.82-2.887-1.82-1.243 0-2.321.68-2.886 1.82L49.739 29.737c-.193.391-.58.635-1.008.635-.398 0-.758-.207-.966-.557-.208-.348-.222-.773-.044-1.136l6.096-12.315c.94-1.897 2.736-3.029 4.804-3.029 2.068 0 3.863 1.132 4.802 3.029l6.096 12.315c.18.364.164.788-.044 1.138-.208.35-.568.557-.966.557h.005Z" fill="#fff"/>
+        <path d="M33.753 30.366h-14.35c-1 0-1.595-1.064-1.035-1.853l5.611-7.911c.498-.703 1.606-.637 2.008.118.192.36.165.79-.072 1.125l-4.175 5.885c-.126.177.007.417.231.417h9.537c.21 0 .346-.211.25-.39l-8.152-14.974c-.297-.544-.073-1.214.5-1.496.572-.282 1.275-.07 1.572.475l9.185 16.873c.43.792-.173 1.735-1.108 1.735l-.002-.004Z" fill="#fff"/>
+        <path d="M28.748 11.012c13.571-3.516 27.533-5.715 41.435-7.437C89.245 1.245 108.766.115 127.965 0c2.538.018 6.231.05 8.773.069l3.508.05c-25.671.647-51.421 2.078-76.903 5.308-11.55 1.467-23.203 3.169-34.597 5.586l.002-.001Z" fill="url(#g0)"/>
+        <path d="M127.523 5.617a2.886 2.886 0 0 1 0 5.767h-4.628a.374.374 0 0 1-.374-.373v-5.02c0-.207.167-.374.374-.374h4.628Zm-4.255 5.02h4.255a2.142 2.142 0 0 0 0-4.273h-4.255v4.274Z" fill="#fff" stroke="#fff" stroke-width=".2"/>
+        <path d="M139.938 5.617c.207 0 .374.167.374.373a.374.374 0 0 1-.374.373h-6.776v1.764h6.776a.374.374 0 0 1 0 .746h-6.776v1.764h6.776a.374.374 0 0 1 0 .747h-7.149a.374.374 0 0 1-.373-.373v-5.02c0-.207.167-.374.373-.374h7.149Z" fill="#fff" stroke="#fff" stroke-width=".2"/>
+        <path d="M116.571 5.613c.978 0 1.858.503 2.355 1.343l2.279 3.866c.105.177.045.407-.132.511a.373.373 0 0 1-.508-.051l-.061-.079-2.28-3.866a1.642 1.642 0 0 0-2.829 0l-2.28 3.866c-.104.177-.333.237-.511.132a.373.373 0 0 1-.13-.51l2.28-3.867a2.732 2.732 0 0 1 2.355-1.345Z" fill="#fff" stroke="#fff" stroke-width=".2"/>
+        <path d="M108.979 5.584c.903 0 1.639.734 1.639 1.636 0 .901-.736 1.636-1.639 1.636h-.004l1.555 1.9a.373.373 0 0 1-.575.486l-.001-.001-1.943-2.373h-3.886a.662.662 0 0 0-.662.662v1.492a.373.373 0 0 1-.746 0V9.518c0-.776.631-1.407 1.408-1.407h4.854a.892.892 0 0 0 0-1.78h-5.889a.373.373 0 0 1 0-.747h5.889Z" fill="#fff" stroke="#fff" stroke-width=".2"/>
+        <path d="M96.84 5.618h3.505c.206 0 .373.167.373.373a.373.373 0 0 1-.373.371h-3.156v4.649a.373.373 0 0 1-.746 0v-4.65h-3.251a.373.373 0 0 1 0-.745h3.605c.011-.001.018-.003.019-.003l.025.003Z" fill="#fff" stroke="#fff" stroke-width=".2"/>
+      </g>
+      <defs>
+        <linearGradient id="g0" x1="28.746" y1="5.507" x2="140.246" y2="5.507" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#6EF7D7"/><stop offset="1" stop-color="#089171"/>
+        </linearGradient>
+        <clipPath id="cl0"><rect width="139.5" height="30.375" fill="#fff" transform="translate(.75)"/></clipPath>
+      </defs>
+    </svg>
+
+    <!-- language switcher -->
+    <div class="lang" id="lang">
+      <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+        <span class="flag" id="curFlag">🇺🇸</span>
+        <span id="curName">EN</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="lang-menu" id="langMenu" role="menu"></div>
+    </div>
+  </header>
+
+  <!-- hero -->
+  <section class="hero">
+    <h1><span class="grad" data-i18n="heroTitle">Welcome to Catapult</span></h1>
+    <p data-i18n="heroSub">The launchpad for the next 1000×. Pick where you want to go.</p>
+  </section>
+
+  <!-- binance hero banner -->
+  <div class="bnb-banner">
+    <div class="bnb-banner-inner">
+      <!-- Binance mark -->
+      <svg class="bnb-icon" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="#F0B90B" d="m38.2 53.2 24.8-24.8 24.8 24.8 14.4-14.4L63 9 24.4 47.6l13.8 5.6Z" opacity="0"/>
+        <g fill="#F0B90B">
+          <path d="M63 24.4 38.6 48.8 50.9 61 63 48.9 75.1 61l12.3-12.2L63 24.4Z"/>
+          <path d="M24.4 63 36.6 50.8 48.8 63 36.6 75.2 24.4 63Z"/>
+          <path d="M63 101.6 38.6 77.2 50.9 65 63 77.1 75.1 65l12.3 12.2L63 101.6Z"/>
+          <path d="M101.6 63 89.4 50.8 77.2 63l12.2 12.2L101.6 63Z"/>
+          <path d="M75.4 63 63 50.6 53.8 59.8l-1.1 1L50.7 63l12.3 12.3L75.4 63Z"/>
+        </g>
+      </svg>
+      <div class="bnb-text">
+        <div class="lbl">Binance Wallet × Catapult</div>
+        <div class="amt">1 666 667 <small data-i18n="bnbIn">in $PULT tokens</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- link cards -->
+  <nav class="cards">
+
+    <!-- 1) Binance campaign -->
+    <a class="card c-bnb" data-url="https://www.binance.com/en/web3-campaign/airdrop/5106085852571419392" role="button">
+      <div class="card-ic">
+        <svg viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg"><g fill="#F0B90B">
+          <path d="M63 24.4 38.6 48.8 50.9 61 63 48.9 75.1 61l12.3-12.2L63 24.4Z"/>
+          <path d="M24.4 63 36.6 50.8 48.8 63 36.6 75.2 24.4 63Z"/>
+          <path d="M63 101.6 38.6 77.2 50.9 65 63 77.1 75.1 65l12.3 12.2L63 101.6Z"/>
+          <path d="M101.6 63 89.4 50.8 77.2 63l12.2 12.2L101.6 63Z"/>
+          <path d="M75.4 63 63 50.6 50.7 63 63 75.3 75.4 63Z"/>
+        </g></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title"><span data-i18n="c1Title">Binance × Catapult Airdrop</span><span class="tag lim" data-i18n="tagLimited">Limited</span></div>
+        <div class="card-sub" data-i18n="c1Sub">Join the exclusive Web3 campaign</div>
+      </div>
+      <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <!-- 2) Registration -->
+    <a class="card c-trade" data-url="https://catapult.trade/r/LUDOMAN?ct_id=9eKzAVwxo9" role="button">
+      <div class="card-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6ef7d7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title"><span data-i18n="c2Title">Start Trading</span><span class="tag rec" data-i18n="tagRec">Recommended</span></div>
+        <div class="card-sub" data-i18n="c2Sub">Create your account &amp; get started</div>
+      </div>
+      <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <!-- 3) Packages -->
+    <a class="card c-pack" data-url="https://catapult.trade/ru/turbo/creator/packages?ct_id=9eKzAVwxo9" role="button">
+      <div class="card-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#c79bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title"><span data-i18n="c3Title">Earn with Packages</span><span class="tag earn" data-i18n="tagEarn">Earn</span></div>
+        <div class="card-sub" data-i18n="c3Sub">Up to 14% monthly ROI</div>
+      </div>
+      <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+  </nav>
+
+  <!-- footer -->
+  <footer class="foot">
+    <div class="verified">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <span data-i18n="verified">Official Catapult links</span>
+    </div>
+    <p data-i18n="footer">Not financial advice. Trade responsibly.</p>
+  </footer>
+</main>
+
+<!-- toast -->
+<div class="toast" id="toast"><div class="spin"></div><span id="toastTxt">Opening in your browser…</span></div>
+
+<!-- in-app hint overlay -->
+<div class="hint" id="hint">
+  <div class="hint-arrow">⤴</div>
+  <div class="hint-card">
+    <div class="big">🌐</div>
+    <h3 data-i18n="hintTitle">Open in your browser</h3>
+    <p data-i18n="hintBody">Tap the <span class="dots">···</span> menu in the corner and choose “Open in browser”.</p>
+    <button id="hintClose" data-i18n="hintBtn">Got it</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   i18n — English default, auto-selected from the visitor's
+   browser locale (which follows their region/country).
+   ============================================================ */
+const I18N = {
+  en:{flag:"🇺🇸",name:"EN",heroTitle:"Welcome to Catapult",heroSub:"The launchpad for the next 1000×. Pick where you want to go.",bnbIn:"in $PULT tokens",c1Title:"Binance × Catapult Airdrop",c1Sub:"Join the exclusive Web3 campaign",c2Title:"Start Trading",c2Sub:"Create your account & get started",c3Title:"Earn with Packages",c3Sub:"Up to 14% monthly ROI",tagLimited:"Limited",tagRec:"Recommended",tagEarn:"Earn",verified:"Official Catapult links",footer:"Not financial advice. Trade responsibly.",opening:"Opening in your browser…",hintTitle:"Open in your browser",hintBody:'Tap the <span class="dots">···</span> menu in the corner and choose “Open in browser”.',hintBtn:"Got it"},
+  ru:{flag:"🇷🇺",name:"RU",heroTitle:"Добро пожаловать в Catapult",heroSub:"Лаунчпад для следующего 1000×. Выберите, куда хотите перейти.",bnbIn:"в токенах $PULT",c1Title:"Эирдроп Binance × Catapult",c1Sub:"Участвуйте в эксклюзивной Web3-кампании",c2Title:"Начать торговлю",c2Sub:"Создайте аккаунт и начните",c3Title:"Зарабатывать на пакетах",c3Sub:"До 14% доходности в месяц",tagLimited:"Лимит",tagRec:"Советуем",tagEarn:"Доход",verified:"Официальные ссылки Catapult",footer:"Не является финансовым советом. Торгуйте ответственно.",opening:"Открываем в вашем браузере…",hintTitle:"Откройте в браузере",hintBody:'Нажмите <span class="dots">···</span> в углу и выберите «Открыть в браузере».',hintBtn:"Понятно"},
+  es:{flag:"🇪🇸",name:"ES",heroTitle:"Bienvenido a Catapult",heroSub:"La plataforma de lanzamiento para el próximo 1000×. Elige a dónde quieres ir.",bnbIn:"en tokens $PULT",c1Title:"Airdrop Binance × Catapult",c1Sub:"Únete a la campaña Web3 exclusiva",c2Title:"Empezar a operar",c2Sub:"Crea tu cuenta y empieza",c3Title:"Gana con los paquetes",c3Sub:"Hasta 14% de ROI mensual",tagLimited:"Limitado",tagRec:"Recomendado",tagEarn:"Gana",verified:"Enlaces oficiales de Catapult",footer:"No es asesoramiento financiero. Opera con responsabilidad.",opening:"Abriendo en tu navegador…",hintTitle:"Abre en tu navegador",hintBody:'Toca el menú <span class="dots">···</span> en la esquina y elige “Abrir en el navegador”.',hintBtn:"Entendido"},
+  pt:{flag:"🇧🇷",name:"PT",heroTitle:"Bem-vindo à Catapult",heroSub:"A plataforma de lançamento para o próximo 1000×. Escolha para onde ir.",bnbIn:"em tokens $PULT",c1Title:"Airdrop Binance × Catapult",c1Sub:"Participe da campanha Web3 exclusiva",c2Title:"Começar a operar",c2Sub:"Crie sua conta e comece",c3Title:"Ganhe com pacotes",c3Sub:"Até 14% de ROI mensal",tagLimited:"Limitado",tagRec:"Recomendado",tagEarn:"Ganhar",verified:"Links oficiais da Catapult",footer:"Não é aconselhamento financeiro. Opere com responsabilidade.",opening:"Abrindo no seu navegador…",hintTitle:"Abra no seu navegador",hintBody:'Toque no menu <span class="dots">···</span> no canto e escolha “Abrir no navegador”.',hintBtn:"Entendi"},
+  tr:{flag:"🇹🇷",name:"TR",heroTitle:"Catapult’a hoş geldiniz",heroSub:"Bir sonraki 1000× için fırlatma rampası. Nereye gitmek istediğinizi seçin.",bnbIn:"$PULT token olarak",c1Title:"Binance × Catapult Airdrop",c1Sub:"Özel Web3 kampanyasına katılın",c2Title:"İşleme başla",c2Sub:"Hesabını oluştur ve başla",c3Title:"Paketlerle kazan",c3Sub:"Aylık %14’e varan getiri",tagLimited:"Sınırlı",tagRec:"Önerilen",tagEarn:"Kazan",verified:"Resmi Catapult bağlantıları",footer:"Yatırım tavsiyesi değildir. Sorumlu işlem yapın.",opening:"Tarayıcınızda açılıyor…",hintTitle:"Tarayıcıda aç",hintBody:'Köşedeki <span class="dots">···</span> menüsüne dokunun ve “Tarayıcıda aç” seçeneğini seçin.',hintBtn:"Anladım"},
+  fr:{flag:"🇫🇷",name:"FR",heroTitle:"Bienvenue sur Catapult",heroSub:"La rampe de lancement du prochain 1000×. Choisissez votre destination.",bnbIn:"en jetons $PULT",c1Title:"Airdrop Binance × Catapult",c1Sub:"Rejoignez la campagne Web3 exclusive",c2Title:"Commencer à trader",c2Sub:"Créez votre compte et démarrez",c3Title:"Gagnez avec les packs",c3Sub:"Jusqu’à 14 % de ROI mensuel",tagLimited:"Limité",tagRec:"Recommandé",tagEarn:"Gagner",verified:"Liens officiels Catapult",footer:"Ceci n’est pas un conseil financier. Tradez de façon responsable.",opening:"Ouverture dans votre navigateur…",hintTitle:"Ouvrir dans le navigateur",hintBody:'Touchez le menu <span class="dots">···</span> dans le coin et choisissez « Ouvrir dans le navigateur ».',hintBtn:"Compris"},
+  de:{flag:"🇩🇪",name:"DE",heroTitle:"Willkommen bei Catapult",heroSub:"Die Startrampe für den nächsten 1000×. Wähle dein Ziel.",bnbIn:"in $PULT-Token",c1Title:"Binance × Catapult Airdrop",c1Sub:"Nimm an der exklusiven Web3-Kampagne teil",c2Title:"Mit dem Trading starten",c2Sub:"Konto erstellen und loslegen",c3Title:"Mit Paketen verdienen",c3Sub:"Bis zu 14 % ROI pro Monat",tagLimited:"Limitiert",tagRec:"Empfohlen",tagEarn:"Verdienen",verified:"Offizielle Catapult-Links",footer:"Keine Finanzberatung. Handle verantwortungsvoll.",opening:"Wird im Browser geöffnet…",hintTitle:"Im Browser öffnen",hintBody:'Tippe auf das <span class="dots">···</span>-Menü in der Ecke und wähle „Im Browser öffnen“.',hintBtn:"Verstanden"},
+  ar:{flag:"🇸🇦",name:"AR",rtl:true,heroTitle:"مرحبًا بك في Catapult",heroSub:"منصة الإطلاق نحو الـ 1000× القادم. اختر وجهتك.",bnbIn:"بعملات $PULT",c1Title:"إيردروب Binance × Catapult",c1Sub:"انضم إلى حملة Web3 الحصرية",c2Title:"ابدأ التداول",c2Sub:"أنشئ حسابك وابدأ",c3Title:"اربح مع الباقات",c3Sub:"حتى 14% عائد شهري",tagLimited:"محدود",tagRec:"موصى به",tagEarn:"اربح",verified:"روابط Catapult الرسمية",footer:"ليست نصيحة مالية. تداول بمسؤولية.",opening:"يتم الفتح في متصفحك…",hintTitle:"افتح في المتصفح",hintBody:'اضغط على قائمة <span class="dots">···</span> في الزاوية واختر «فتح في المتصفح».',hintBtn:"حسنًا"},
+  hi:{flag:"🇮🇳",name:"HI",heroTitle:"Catapult में आपका स्वागत है",heroSub:"अगले 1000× के लिए लॉन्चपैड। चुनें कि आप कहाँ जाना चाहते हैं।",bnbIn:"$PULT टोकन में",c1Title:"Binance × Catapult एयरड्रॉप",c1Sub:"विशेष Web3 अभियान में शामिल हों",c2Title:"ट्रेडिंग शुरू करें",c2Sub:"अपना खाता बनाएँ और शुरू करें",c3Title:"पैकेज से कमाएँ",c3Sub:"हर महीने 14% तक ROI",tagLimited:"सीमित",tagRec:"अनुशंसित",tagEarn:"कमाएँ",verified:"आधिकारिक Catapult लिंक",footer:"यह वित्तीय सलाह नहीं है। ज़िम्मेदारी से ट्रेड करें।",opening:"आपके ब्राउज़र में खुल रहा है…",hintTitle:"ब्राउज़र में खोलें",hintBody:'कोने में <span class="dots">···</span> मेन्यू पर टैप करें और “ब्राउज़र में खोलें” चुनें।',hintBtn:"समझ गया"},
+  id:{flag:"🇮🇩",name:"ID",heroTitle:"Selamat datang di Catapult",heroSub:"Launchpad untuk 1000× berikutnya. Pilih ke mana Anda ingin pergi.",bnbIn:"dalam token $PULT",c1Title:"Airdrop Binance × Catapult",c1Sub:"Ikuti kampanye Web3 eksklusif",c2Title:"Mulai trading",c2Sub:"Buat akun Anda & mulai",c3Title:"Hasilkan dengan paket",c3Sub:"ROI hingga 14% per bulan",tagLimited:"Terbatas",tagRec:"Disarankan",tagEarn:"Cuan",verified:"Tautan resmi Catapult",footer:"Bukan nasihat keuangan. Trading dengan bijak.",opening:"Membuka di browser Anda…",hintTitle:"Buka di browser",hintBody:'Ketuk menu <span class="dots">···</span> di pojok dan pilih “Buka di browser”.',hintBtn:"Mengerti"}
+};
+
+let CUR = 'en';
+
+function detectLang(){
+  const langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+  for(const l of langs){
+    const code = (l||'').toLowerCase().split('-')[0];
+    if(I18N[code]) return code;
+  }
+  return 'en';
+}
+
+function applyLang(code){
+  const t = I18N[code] || I18N.en;
+  CUR = code;
+  document.documentElement.lang = code;
+  document.documentElement.dir = t.rtl ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(t[key] != null) el.innerHTML = t[key];
+  });
+  document.getElementById('curFlag').textContent = t.flag;
+  document.getElementById('curName').textContent = t.name;
+  document.getElementById('toastTxt').textContent = t.opening;
+  // mark active option
+  document.querySelectorAll('.lang-opt').forEach(o=>o.classList.toggle('active', o.dataset.code===code));
+  try{ localStorage.setItem('cat_lang', code); }catch(e){}
+}
+
+/* build language menu */
+(function buildMenu(){
+  const menu = document.getElementById('langMenu');
+  Object.keys(I18N).forEach(code=>{
+    const t = I18N[code];
+    const o = document.createElement('div');
+    o.className='lang-opt';o.dataset.code=code;o.setAttribute('role','menuitem');
+    o.innerHTML = `<span class="flag">${t.flag}</span><span>${langFull(code)}</span>`;
+    o.addEventListener('click',()=>{ applyLang(code); closeMenu(); });
+    menu.appendChild(o);
+  });
+})();
+function langFull(c){return {en:'English',ru:'Русский',es:'Español',pt:'Português',tr:'Türkçe',fr:'Français',de:'Deutsch',ar:'العربية',hi:'हिन्दी',id:'Bahasa Indonesia'}[c]||c;}
+
+/* language dropdown open/close */
+const langWrap = document.getElementById('lang');
+const langBtn  = document.getElementById('langBtn');
+function openMenu(){langWrap.classList.add('open');langBtn.setAttribute('aria-expanded','true');}
+function closeMenu(){langWrap.classList.remove('open');langBtn.setAttribute('aria-expanded','false');}
+langBtn.addEventListener('click',e=>{e.stopPropagation();langWrap.classList.contains('open')?closeMenu():openMenu();});
+document.addEventListener('click',closeMenu);
+
+/* init language: saved choice > browser locale > en */
+(function initLang(){
+  let saved=null; try{ saved=localStorage.getItem('cat_lang'); }catch(e){}
+  applyLang(saved && I18N[saved] ? saved : detectLang());
+})();
+
+/* ============================================================
+   "Open in the real browser" — break out of in-app webviews
+   (Telegram / Instagram / Facebook / TikTok / etc.)
+   ============================================================ */
+const toast = document.getElementById('toast');
+const hint  = document.getElementById('hint');
+document.getElementById('hintClose').addEventListener('click',()=>hint.classList.remove('show'));
+
+function showToast(){
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2600);
+}
+
+const UA = navigator.userAgent || '';
+const isAndroid = /Android/i.test(UA);
+const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const isInApp = /(FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|Telegram|TelegramBot|Twitter|TikTok|musical_ly|BytedanceWebview|Snapchat|GSA|OKApp|VKClient)/i.test(UA);
+
+function openExternal(url){
+  showToast();
+
+  /* ---- Android: an intent:// URL hands the link to the system,
+     which opens it in the user's DEFAULT real browser, escaping the webview. ---- */
+  if(isAndroid){
+    const noProto = url.replace(/^https?:\/\//,'');
+    const intent = 'intent://'+noProto+'#Intent;scheme=https;action=android.intent.action.VIEW;end;';
+    try{ window.location.href = intent; return; }catch(e){}
+  }
+
+  /* ---- iOS inside an in-app browser ---- */
+  if(isIOS && isInApp){
+    // Best effort: try to jump straight to Chrome if it's installed (breaks the webview).
+    const noProto = url.replace(/^https?:\/\//,'');
+    try{ window.location.href = 'googlechromes://'+noProto; }catch(e){}
+    // iOS gives no reliable API to force Safari from Instagram/FB/TikTok webviews,
+    // so after a moment we show a tasteful "open in browser" instruction.
+    setTimeout(()=>{ if(!document.hidden) hint.classList.add('show'); }, 1200);
+    return;
+  }
+
+  /* ---- Normal browsers: open in a new tab ---- */
+  const w = window.open(url,'_blank','noopener,noreferrer');
+  if(!w){ window.location.href = url; }
+}
+
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('click',e=>{ e.preventDefault(); openExternal(card.dataset.url); });
+});
+
+/* ============================================================
+   floating particles
+   ============================================================ */
+(function particles(){
+  const box = document.getElementById('particles');
+  const N = window.innerWidth < 600 ? 14 : 26;
+  for(let i=0;i<N;i++){
+    const p=document.createElement('div');p.className='particle';
+    const s=4+Math.random()*7;
+    p.style.left=Math.random()*100+'%';
+    p.style.width=p.style.height=s+'px';
+    p.style.animationDuration=(9+Math.random()*11)+'s';
+    p.style.animationDelay=(-Math.random()*16)+'s';
+    p.style.opacity=.3+Math.random()*.5;
+    box.appendChild(p);
+  }
+})();
+</script>
+</body>
+</html>
